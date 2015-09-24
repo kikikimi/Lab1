@@ -1,6 +1,8 @@
 package automobile;
 
 import java.io.Serializable;
+import java.text.*;
+import java.util.*;
 
 class Model implements Serializable{
 	private OptionSet [] _optset;

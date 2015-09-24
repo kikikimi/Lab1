@@ -1,9 +1,12 @@
 package automobile;
+import java.text.*;
+import java.util.*;
 
 class OptionSet {
 	private String _optName;
 	private Option [] _options;
 	private int _currOptIndex;
+	private static final long serialVersionUID;
 	
 	OptionSet (int size, String nm){
 		setOptName (nm);
@@ -36,6 +39,13 @@ class OptionSet {
 	}
 	protected int getOpsetSize(){}
 	protected int getCurrOptIndex(){}
+	protected String toStringHelper(){
+		StringBuilder sb = new StringBuilder (_optName);
+		for (int i = 0; i < this._options.length; i++){
+			sb.append(this._options[i].toStringHelper());
+			sb.append("\n");
+		}
+	}
 	
 	
 	class Option {
@@ -53,12 +63,12 @@ class OptionSet {
 			this._optPrice = 0;
 			this._optValue = "";
 		}
-		
-		//fix this
-		protected String toString() {
+
+		protected String toStringHelper() {
 			StringBuilder sb = new StringBuilder (_optValue);
 			sb.append(", Price: ");
-			sb.append(_optPrice);
+			//I never remember how to do number formatting so I borrowed most of this line from http://stackoverflow.com/questions/2379221/java-currency-number-format
+			sb.append(NumberFormat.getCurrencyInstance(new Locale("en", "US")).format(_optPrice));
 			return sb.toString();
 		}
 	}
