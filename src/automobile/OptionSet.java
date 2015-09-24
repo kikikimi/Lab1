@@ -1,4 +1,5 @@
 package automobile;
+
 import java.text.*;
 import java.util.*;
 
@@ -41,7 +42,9 @@ class OptionSet {
 	protected int getCurrOptIndex(){}
 	protected String toStringHelper(){
 		StringBuilder sb = new StringBuilder (_optName);
+		sb.append("\n");
 		for (int i = 0; i < this._options.length; i++){
+			sb.append("\t");
 			sb.append(this._options[i].toStringHelper());
 			sb.append("\n");
 		}
@@ -51,6 +54,7 @@ class OptionSet {
 	class Option {
 		private String _optValue;
 		private double _optPrice;
+		private static final long serialVersionUID;
 		
 		protected Option (){}
 		protected Option (String value, double price){}

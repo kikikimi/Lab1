@@ -85,7 +85,13 @@ class Model implements Serializable{
 	}
 	
 	public String toString(){
-		
+		StringBuilder sb = new StringBuilder(this._modelName);
+		//I never remember how to do number formatting so I borrowed most of this line from http://stackoverflow.com/questions/2379221/java-currency-number-format
+		sb.append(NumberFormat.getCurrencyInstance(new Locale("en", "US")).format(_price));
+		for(int i = 0; i < _optset.length; i++){
+			sb.append("\t");
+			sb.append(this._optset[i].toStringHelper());
+		}
 	}
 
 }
