@@ -1,24 +1,29 @@
+/* Kimberly Disher
+ * CIS 35B Lab 1
+ */
 package automobile;
 
 import java.io.Serializable;
 import java.text.*;
 import java.util.*;
 
-class Model implements Serializable{
+public class Model implements Serializable{
 	private OptionSet [] _optset;
 	private String _modelName;
 	private double _price;
+	private int _optsetCount;
 	
-	private static final long serialVersionUID;
+	private static final long serialVersionUID = 1158L;
+	
 	Model(String nm, OptionSet [] opts, double price){
 		
 	}
 	Model(String nm, int optSetSize, double price){
-		
-	}
-	Model(){
-		
-	}
+		this();
+		setModelName(nm);
+        setPrice(price);
+        }
+	Model(){_optsetCount = 0;}
 	public OptionSet[] getOptionSet() {
 		return _optset;
 	}
@@ -41,6 +46,10 @@ class Model implements Serializable{
 		this._price = price;
 	}
 	
+	public void initOptionSets (int numSets)
+	{
+		this._optset = new OptionSet [numSets];
+	}
 	public double getOptionPrice(String optSetName, String optName){
 		
 	}
@@ -50,20 +59,39 @@ class Model implements Serializable{
 	public double getOptionPrice(int optSetIndex, int optIndex){
 		
 	}
+    public String getOptionValue (int optSetIndex, int optIndex){
+            
+    }
 	public int findOptionSetIndex(String name){
 		
 	}
-	public OptionSet.Option findOption(OptionSet opts, String optValue){
-		
+	public OptionSet.Option findOptionIndex(OptionSet opts, String optValue){
+		return opts.findOptionIndexByValue(optValue);
 	}
-	public int addOptionSet(String setName, OptionSet.Option [] opts){
-		
+	public boolean addOptionSet(String setName, OptionSet.Option [] opts){
+		if (addOptionSet(setName, opts.length)){
+			_optset[_optsetCount -1].setOptions(opts);
+			return true;
+		}
+		else return false;
+	}
+	public boolean addOptionSet(String setName, int setSize) {
+		if (_optsetCount < _optset.length) {
+			_optset[_optsetCount++] = new OptionSet(setSize, setName);
+			return true;
+		}
+		else return false;
 	}
 	public int addOptionToSet(String setName, String optVal, double optPrice){
 		
 	}
 	public int addOptionToSet(int setIndex, String optVal, double optPrice){
 		
+	}
+	public boolean addOptionToLastSet (String optVal, double optPrice){
+		if (_optsetCount < _optset.length) {
+			_optset[_optsetCount].addOption(optVale, optPrice);
+		}
 	}
 	public int deleteOptionSet (int setIndex) {
 		
@@ -83,15 +111,19 @@ class Model implements Serializable{
 	public int updateOption(int setIndex, String optName, double optPrice){
 		
 	}
-	
+	public void initOptionSet (int size){
+            this._optset = new OptionSet [size];
+        }
 	public String toString(){
 		StringBuilder sb = new StringBuilder(this._modelName);
-		//I never remember how to do number formatting so I borrowed most of this line from http://stackoverflow.com/questions/2379221/java-currency-number-format
-		sb.append(NumberFormat.getCurrencyInstance(new Locale("en", "US")).format(_price));
+		sb.append(NumberFormat
+                        .getCurrencyInstance(new Locale("en", "US"))
+                        .format(_price));
 		for(int i = 0; i < _optset.length; i++){
 			sb.append("\t");
 			sb.append(this._optset[i].toStringHelper());
 		}
+                return sb.toString();
 	}
 
 }
