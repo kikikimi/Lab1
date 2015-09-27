@@ -28,7 +28,7 @@ public class Model implements Serializable{
 		return _optset;
 	}
 	public OptionSet getOptionSet(int index){
-		
+		return this._optset[index];
 	}
 	public void setOptionset(OptionSet[] optset) {
 		this._optset = optset;
@@ -50,22 +50,51 @@ public class Model implements Serializable{
 	{
 		this._optset = new OptionSet [numSets];
 	}
-	public double getOptionPrice(String optSetName, String optName){
+	public Double getOptionPrice(String optSetName, String optValue){
+		int setIndex = findOptionSetIndex (optSetName);
+		return getOptionPrice (setIndex, optValue);
 		
 	}
-	public double getOptionPrice(int optSetIndex, String optName){
-		
+	public Double getOptionPrice(int optSetIndex, String optValue){
+		if ((optSetIndex > -1) && (optSetIndex < this._optsetCount))
+			return this._optset[optSetIndex].getOptionPriceByValue(optValue);
+		else return null;
 	}
-	public double getOptionPrice(int optSetIndex, int optIndex){
+	public Double getOptionPrice(int optSetIndex, int optIndex){
+		boolean inbounds = false;
+		if (optSetIndex > -1 && optSetIndex < this._optsetCount){
+			if (optIndex > -1 && optIndex > this._optset[optSetIndex].getOptionCount())
+				inbounds = true;
+		}
 		
+		if (inbounds)
+			return this._optset[optSetIndex].getOptionPrice(optIndex);
+		else return null;
 	}
     public String getOptionValue (int optSetIndex, int optIndex){
-            
+    	boolean inbounds = false;
+    	if (optSetIndex > -1 && optSetIndex < this._optsetCount){
+    		if (optIndex > -1 && optIndex < this._optset[optSetIndex].getOptionCount())
+    			inbounds = true;
+    	}
+    	if (inbounds)
+    		return this._optset[optSetIndex].getOptionValue(optIndex);
+    	else return null;
     }
 	public int findOptionSetIndex(String name){
-		
+		int index = 0;
+        boolean found = false;
+        while (!found && index < this._optsetCount)
+        {
+        	if (_optset[index].getOptName().indexOf(name) != -1)
+        		found = true;
+        	else index++;
+        }
+        if (found) 
+        	return index;
+        else return -1;
 	}
-	public OptionSet.Option findOptionIndex(OptionSet opts, String optValue){
+	public int findOptionIndex(OptionSet opts, String optValue){
 		return opts.findOptionIndexByValue(optValue);
 	}
 	public boolean addOptionSet(String setName, OptionSet.Option [] opts){
@@ -90,14 +119,31 @@ public class Model implements Serializable{
 	}
 	public boolean addOptionToLastSet (String optVal, double optPrice){
 		if (_optsetCount < _optset.length) {
-			_optset[_optsetCount].addOption(optVale, optPrice);
+			_optset[_optsetCount].addOption(optVal, optPrice);
+			return true;
 		}
+		else return false;
 	}
-	public int deleteOptionSet (int setIndex) {
-		
+	public boolean deleteOptionSet (int setIndex) {
+		boolean deleted = false;
+		if (setIndex > -1 && setIndex < this._optsetCount) {
+			this._optset[setIndex] = null;
+			deleted = this.moveUpOptSets(setIndex);
+			this._optsetCount--;
+		}
+		return deleted;
+			
 	}
-	public int deleteOption(int setIndex, String optValue){
-		
+	public boolean deleteOption(int setIndex, String optValue){
+		int optIndex;
+		boolean deleted = false;
+		if (setIndex > -1 && setIndex > this._optsetCount) {
+			optIndex = this._optset[setIndex].findOptionIndexByValue(optValue);
+			if (optIndex != -1) {
+				deleted = this._optset[setIndex].deleteOption(optIndex);
+			}
+		}
+		return deleted;
 	}
 	public int deleteOption(String setName, String optValue){
 		
@@ -124,6 +170,21 @@ public class Model implements Serializable{
 			sb.append(this._optset[i].toStringHelper());
 		}
                 return sb.toString();
+	}
+	
+	private boolean moveUpOptSets (int emptyIndex){
+		try{
+			while (emptyIndex < this._optsetCount -2){ //optsetCount is supposed to hold the next empty index at the end of the array
+				this._optset[emptyIndex] = this._optset[emptyIndex + 1];
+				emptyIndex++;
+			}
+			this._optset[emptyIndex] = null;
+			return true;
+		}
+		catch (IndexOutOfBoundsException e) {
+			return false;
+		}
+		
 	}
 
 }
