@@ -9,7 +9,7 @@ import automobile.*;
 public class FileIO {
 	
 	private static final int DEFAULT_GROUP_SZ = 20;
-	FileIO() {}
+	public FileIO() {}
 	
 	public Model buildAutoModelObject(String fileName, Model automodel) {
 

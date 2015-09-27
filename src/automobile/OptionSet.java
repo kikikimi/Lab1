@@ -52,6 +52,24 @@ class OptionSet implements Serializable{
 		else 
 			return false;
 	}
+	protected boolean updateOptionPrice (String optVal, double price) {
+		boolean updated = false;
+		int optIndex = this.findOptionIndexByValue(optVal);
+		if (optIndex != -1) {
+			this._options[optIndex].setOptPrice(price);
+			updated = true;
+		}
+		return updated;
+	}
+	protected boolean updateOptionValue (String optVal, String newOptVal) {
+		boolean updated = false;
+		int optIndex = this.findOptionIndexByValue(optVal);
+		if (optIndex != -1) {
+			this._options[optIndex].setOptValue(newOptVal);
+			updated = true;
+		}
+		return updated;
+	}
 	protected int getOpsetSize(){return this._options.length;}
 	protected int getOptionCount(){return this._optCount;}    
     protected int findOptionIndexByValue (String optValue){
@@ -85,6 +103,19 @@ class OptionSet implements Serializable{
 			sb.append("\n");
 		}
                 return sb.toString();
+	}
+	protected boolean updateOptionsSize (int size) {
+		if (size > this._optCount) { //make sure the new array is large enough to copy all existing options
+			
+			Option [] options = new Option [size];
+			for (int i = 0; i < _optCount; i++) {
+				options [i] = this._options [i];
+			}
+			_options = options;
+			return true;
+		}
+		else return false;
+		
 	}
 	
 	private boolean moveUpOptions (int emptyIndex){
