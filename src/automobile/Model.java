@@ -15,15 +15,15 @@ public class Model implements Serializable{
 	
 	private static final long serialVersionUID = 1158L;
 	
-	Model(String nm, OptionSet [] opts, double price){
+	public Model(String nm, OptionSet [] opts, double price){
 		
 	}
-	Model(String nm, int optSetSize, double price){
+	public Model(String nm, int optSetSize, double price){
 		this();
 		setModelName(nm);
         setPrice(price);
         }
-	Model(){_optsetCount = 0;}
+	public Model(){_optsetCount = 0;}
 	public OptionSet[] getAllOptionSets() {
 		return _optset;
 	}
@@ -141,7 +141,7 @@ public class Model implements Serializable{
 	public boolean deleteOption(int setIndex, String optValue){
 		int optIndex;
 		boolean deleted = false;
-		if (setIndex > -1 && setIndex > this._optsetCount) {
+		if (setIndex > -1 && setIndex < this._optsetCount) {
 			optIndex = this._optset[setIndex].findOptionIndexByValue(optValue);
 			if (optIndex != -1) {
 				deleted = deleteOption(setIndex, optIndex);
@@ -185,18 +185,20 @@ public class Model implements Serializable{
 	}
 	public String toString(){
 		StringBuilder sb = new StringBuilder(this._modelName);
+		sb.append(" Base Price: ");
 		sb.append(NumberFormat
                         .getCurrencyInstance(new Locale("en", "US"))
                         .format(_price));
-		for(int i = 0; i < _optset.length; i++){
-			sb.append("\t");
+		sb.append("\n");
+		for(int i = 0; i < _optsetCount; i++){
+			sb.append("    ");		//using spaces, since tab sizes vary by system/
 			sb.append(this._optset[i].toStringHelper());
 		}
         return sb.toString();
 	}
 	private boolean moveUpOptSets (int emptyIndex){
 		try{
-			while (emptyIndex < this._optsetCount -2){ //optsetCount is supposed to hold the next empty index at the end of the array
+			while (emptyIndex < this._optsetCount - 1){ //optsetCount is supposed to hold the next empty index at the end of the array
 				this._optset[emptyIndex] = this._optset[emptyIndex + 1];
 				emptyIndex++;
 			}

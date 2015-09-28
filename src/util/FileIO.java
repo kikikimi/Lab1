@@ -15,6 +15,8 @@ public class FileIO {
 
 		boolean endFile = false;
 		String line;
+		File fileCheck = new File (fileName);
+		System.out.println("Trying to load " + fileCheck.getAbsolutePath());
 		try{
 			FileReader fReader = new FileReader(fileName);
 			BufferedReader bReader = new BufferedReader(fReader);
@@ -67,7 +69,8 @@ public class FileIO {
 	}
 	
 	public void parseLine(Model automodel, String line) {
-		String [] splitLine = line.split(", ");
+		String [] splitLine = line.split(",");
+		trimWhiteSpaceInArray(splitLine);
 
 		try {
 			
@@ -87,7 +90,7 @@ public class FileIO {
 					System.out.println("Error with count of Option sets" + e.getMessage());
 				}
 			}
-			else if (splitLine[0].compareToIgnoreCase("optionset") == 1) {
+			else if (splitLine[0].compareToIgnoreCase("optionset") == 0) {
 				try {
 					automodel.addOptionSet(splitLine[1], Integer.parseInt(splitLine[2]));
 				}
@@ -97,12 +100,17 @@ public class FileIO {
 				}
 			}
 			else if (splitLine[0].compareToIgnoreCase("option") == 0){
-				automodel.addOptionToLastSet(splitLine[1], Double.parseDouble(splitLine[1]));
+				automodel.addOptionToLastSet(splitLine[1], Double.parseDouble(splitLine[2]));
 			}
 		}
 		catch (Exception e) {
 			System.out.println ("Error parsing Model file." + e.getMessage());
 		}
 	}
-
+	protected void trimWhiteSpaceInArray (String [] line)
+	{
+		for (int i = 0; i < line.length; i++){
+			line [i] = line[i].trim();
+		}
+	}
 }

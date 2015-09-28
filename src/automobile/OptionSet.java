@@ -13,6 +13,7 @@ class OptionSet implements Serializable{
 	private int _optCount;
 	private static final long serialVersionUID = 1158L;
 	
+	OptionSet (){}
 	OptionSet (int size, String nm){
 		this (nm);
 		this._options = new Option[size];
@@ -32,14 +33,20 @@ class OptionSet implements Serializable{
 	protected Option getOption (int index) {return this._options[index];}
         
 	protected double getOptionPrice (int index) {return this._options[index].getOptPrice();}
+	
 	protected String getOptionValue (int index) {return this._options[index].getOptValue();}
+	
+	protected int getOpsetSize(){return this._options.length;}
+	
+	protected int getOptionCount(){return this._optCount;}    
+	
 	protected Double getOptionPriceByValue (String optValue) {
 		int optIndex = findOptionIndexByValue(optValue);
 		if (optIndex > -1)
 			return this._options[optIndex]._optPrice;
 		else return null;
 	}
-	protected void setOptions(Option[] options) {
+	protected void setOptions(Option[] options) {	//copy the contents, we don't trust that the source array won't be messed with.
 		for (Option opt : options){
 			this.addOption (opt._optValue, opt._optPrice);
 		}
@@ -70,8 +77,6 @@ class OptionSet implements Serializable{
 		}
 		return updated;
 	}
-	protected int getOpsetSize(){return this._options.length;}
-	protected int getOptionCount(){return this._optCount;}    
     protected int findOptionIndexByValue (String optValue){
         int index = 0;
         boolean found = false;
@@ -94,16 +99,6 @@ class OptionSet implements Serializable{
 		}
 		return deleted;
     }
-	protected String toStringHelper(){
-		StringBuilder sb = new StringBuilder (_optName);
-		sb.append("\n");
-		for (int i = 0; i < this._options.length; i++){
-			sb.append("\t");
-			sb.append(this._options[i].toStringHelper());
-			sb.append("\n");
-		}
-                return sb.toString();
-	}
 	protected boolean updateOptionsSize (int size) {
 		if (size > this._optCount) { //make sure the new array is large enough to copy all existing options
 			
@@ -115,12 +110,20 @@ class OptionSet implements Serializable{
 			return true;
 		}
 		else return false;
-		
 	}
-	
+	protected String toStringHelper(){
+		StringBuilder sb = new StringBuilder (_optName);
+		sb.append("\n");
+		for (int i = 0; i < this._optCount; i++){
+			sb.append("        "); 			// using spaces, since tab size varies by system
+			sb.append(this._options[i].toStringHelper());
+			sb.append("\n");
+		}
+                return sb.toString();
+	}
 	private boolean moveUpOptions (int emptyIndex){
 		try{
-			while (emptyIndex < this._optCount -2){ //optCount is supposed to hold the next empty index at the end of the array
+			while (emptyIndex < this._optCount - 1){ //optCount is supposed to hold the next empty index at the end of the array
 				this._options[emptyIndex] = this._options[emptyIndex + 1];
 				emptyIndex++;
 			}
@@ -130,7 +133,6 @@ class OptionSet implements Serializable{
 		catch (IndexOutOfBoundsException e) {
 			return false;
 		}
-		
 	}
         
 	class Option implements Serializable{
@@ -143,8 +145,10 @@ class OptionSet implements Serializable{
 			this._optValue = opt._optValue;
 			this._optPrice = opt._optPrice;
 		}
-		protected Option (String value, double price){}
-		
+		protected Option (String value, double price){
+			setOptValue(value);
+			setOptPrice(price);
+		}
 		protected String getOptValue() {return _optValue;}
 		protected void setOptValue(String optValue) {this._optValue = optValue;}
 		protected double getOptPrice() {return _optPrice;}
@@ -153,7 +157,6 @@ class OptionSet implements Serializable{
 			this._optPrice = 0;
 			this._optValue = "";
 		}
-
 		protected String toStringHelper() {
 			StringBuilder sb = new StringBuilder (_optValue);
 			sb.append(", Price: ");
