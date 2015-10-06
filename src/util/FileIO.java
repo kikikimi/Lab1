@@ -8,11 +8,11 @@ import automobile.*;
 
 public class FileIO {
 	
-	private static final int DEFAULT_GROUP_SZ = 20;
+	private static final int DEFAULT_GROUP_SZ = 20;//in case an array size is not specified.
+	
 	public FileIO() {}
 	
 	public Model buildAutoModelObject(String fileName, Model automodel) {
-
 		boolean endFile = false;
 		String line;
 		File fileCheck = new File (fileName);
@@ -36,9 +36,7 @@ public class FileIO {
 			System.out.println("Error reading model file: " + e.getMessage());
 			return null;
 		}
-		
 	}
-	
 	public Model deserializeAutoModelObject(String fileName, Model automodel) {
 		try{
 			ObjectInputStream objectIn = new ObjectInputStream (new FileInputStream (fileName));
@@ -50,23 +48,9 @@ public class FileIO {
 			System.out.println("Error writing Serialized objects: " + e.getMessage());
 			return null;
 		}
-		
 	}
 	//default deserialize to "automodel.ser"
 	public Model deserializeAutoModelObject(Model automodel) {return deserializeAutoModelObject("automodel.ser", automodel);}
-	
-	public boolean serializeAutoObject(String fileName, Model automodel) {
-		try{
-			ObjectOutputStream objectOut = new ObjectOutputStream (new FileOutputStream (fileName));
-			objectOut.writeObject(automodel);
-			objectOut.close();
-		return true;
-		}
-		catch (Exception e){
-			System.out.println ("Error loading Serialized objects: " + e.getMessage());
-			return false;
-		}
-	}
 	
 	public void parseLine(Model automodel, String line) {
 		String [] splitLine = line.split(",");
@@ -78,7 +62,7 @@ public class FileIO {
 				automodel.setModelName(splitLine[1]);
 			}
 			else if (splitLine[0].compareToIgnoreCase("model price") == 0) {
-				automodel.setPrice(Double.parseDouble(splitLine[1]));
+				automodel.setModelPrice(Double.parseDouble(splitLine[1]));
 			}
 			else if (splitLine[0].compareToIgnoreCase("optionsets") == 0 || 
 					splitLine[0].compareToIgnoreCase("option sets") == 0) {
@@ -107,8 +91,19 @@ public class FileIO {
 			System.out.println ("Error parsing Model file." + e.getMessage());
 		}
 	}
-	protected void trimWhiteSpaceInArray (String [] line)
-	{
+	public boolean serializeAutoObject(String fileName, Model automodel) {
+		try{
+			ObjectOutputStream objectOut = new ObjectOutputStream (new FileOutputStream (fileName));
+			objectOut.writeObject(automodel);
+			objectOut.close();
+		return true;
+		}
+		catch (Exception e){
+			System.out.println ("Error loading Serialized objects: " + e.getMessage());
+			return false;
+		}
+	}
+	protected void trimWhiteSpaceInArray (String [] line){
 		for (int i = 0; i < line.length; i++){
 			line [i] = line[i].trim();
 		}

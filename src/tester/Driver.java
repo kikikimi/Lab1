@@ -22,15 +22,19 @@ public class Driver {
 		car2 = modelMaker.deserializeAutoModelObject("carLab1.ser", car2);
 		printModel(car2, "Serialized and Deserialized:");
 	}
+	//Let's build a Model instance!
 	private static Model makeCarModel (FileIO modelMaker, Model car){
 		return modelMaker.buildAutoModelObject("automobile.txt", car);
 	}
+	//test an add method
 	private static void addColorToModel (Model car){
 		if (car != null){
 			car.updateOptionSetSize(0, 11);
 			car.addOptionToSet("Color", "Super Grape Metallic Clearcoat", 0D);
 		}
 	}
+	
+	//Let's test some delete methods
 	private static void removeColorFromModel(Model car){
 		if (car != null){
 			car.deleteOption("Color", "Super Grape Metallic Clearcoat");
